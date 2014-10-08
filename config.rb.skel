@@ -1,0 +1,4 @@
+# config
+
+$IRC_CHANNEL    = ''
+$IRC_URL        = ''
