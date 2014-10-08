@@ -12,21 +12,18 @@ feeds_file = File::expand_path('', File::dirname(__FILE__)) + '/feeds.yml'
 urls = YAML.load(File.read(feeds_file))
 pp urls
 
-
 urls.each do |item|
 
   feed = Feedjira::Feed.fetch_and_parse(item['url'])
 
+  # using attributes
+  #   entry.title
+  #   entry.url
+  #   entry.published
   feed.entries.each do |entry|
-
-    #puts "-----"
-    #puts entry.title
-    #puts entry.url
-    #puts entry.published
 
     now = Time.now
     updated = entry.published.getlocal
-    #p "#{updated} >= #{now.yesterday}"
 
     if updated >= now.yesterday
 
