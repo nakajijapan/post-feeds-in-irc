@@ -3,6 +3,7 @@ require 'yaml'
 require 'pp'
 require 'feedjira'
 require 'active_support/all'
+require 'carrier-pigeon'
 
 # read configration
 load File::expand_path('', File::dirname(__FILE__)) + '/config.rb'
@@ -28,8 +29,28 @@ urls.each do |item|
     if updated >= now.yesterday
 
       # via ikachan
-      system("curl -F channel=\##{$IRC_CHANNEL} -F message=\"MobileFirst [#{item['title']}] #{entry.title} - #{entry.published} \" #{$IRC_URL}")
-      system("curl -F channel=\##{$IRC_CHANNEL} -F message=\"MobileFirst #{entry.url}  \" #{$IRC_URL}")
+      if $USE_IKACHAN
+
+        system("curl -F channel=\##{$IRC_CHANNEL} -F message=\"MobileFirst [#{item['title']}] #{entry.title} - #{entry.published} \" #{$IRC_URL}")
+        system("curl -F channel=\##{$IRC_CHANNEL} -F message=\"MobileFirst #{entry.url}  \" #{$IRC_URL}")
+
+      end
+
+      # via irc
+      if $USE_IRC
+
+        CarrierPigeon.send(
+          uri: $IRC_ANOTHER_URL,
+          message: "MobileFirst [#{item['title']}] #{entry.title} - #{entry.published}",
+          join: true
+        )
+        CarrierPigeon.send(
+          uri: $IRC_ANOTHER_URL,
+          message: "MobileFirst #{entry.url}",
+          join: true
+        )
+
+      end
 
     end
 
